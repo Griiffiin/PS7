@@ -37,10 +37,22 @@ namespace SWARM.Server.Controllers.Application
         [Route("Delete/{pZip}")]
         public async Task<IActionResult> DeleteStr (String pZip)
         {
-            Zipcode itmZipcode = await _context.Zipcodes.Where(x => x.Zip == pZip).FirstOrDefaultAsync();
+
+            var trans = _context.Database.BeginTransaction();
+            try
+            {
+                Zipcode itmZipcode = await _context.Zipcodes.Where(x => x.Zip == pZip).FirstOrDefaultAsync();
             _context.Remove(itmZipcode);
             await _context.SaveChangesAsync();
-            return Ok();
+                await trans.CommitAsync();
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, "Record Exists");
+            }
         }
 
         [HttpGet]

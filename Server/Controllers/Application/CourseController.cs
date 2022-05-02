@@ -36,31 +36,17 @@ namespace SWARM.Server.Controllers.Application
             var trans = _context.Database.BeginTransaction();
             try
             {
-
-                var _pres = await _context.Courses.Where(x => x.Prerequisite == pCourseNo).ToListAsync();
-
-                foreach (var _pre in _pres)
-                {
-
-                    _pre.Prerequisite = null;
-                    _pre.PrerequisiteSchoolId = null;
-                    _context.Courses.Update(_pre);
-                    //await _context.SaveChangesAsync();
-                }
-
-                Course itmCourse = await _context.Courses.Where(x => x.CourseNo == pCourseNo).FirstOrDefaultAsync();
-                _context.Remove(itmCourse);
-
+                Course itmCrse = await _context.Courses.Where(x => x.CourseNo == pCourseNo).FirstOrDefaultAsync();
+                _context.Remove(itmCrse);
                 await _context.SaveChangesAsync();
                 await trans.CommitAsync();
-
                 return Ok();
 
             }
             catch (Exception ex)
             {
                 trans.Rollback();
-                return StatusCode(StatusCodes.Status500InternalServerError, "Record Exists");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 

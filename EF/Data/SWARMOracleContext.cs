@@ -16,6 +16,7 @@ namespace SWARM.EF.Data
         public SWARMOracleContext(DbContextOptions<SWARMOracleContext> options)
             : base(options)
         {
+
         }
 
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
